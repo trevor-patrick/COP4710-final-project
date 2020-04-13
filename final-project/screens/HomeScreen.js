@@ -32,7 +32,7 @@ function firebaseTest() {
   ref.set({
     trevor: {
       date_of_birth: "06/01/1998",
-      full_name: "Trevor Patrick"
+      timestamp: Date.now()
     }
   })
 }
