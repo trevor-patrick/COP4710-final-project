@@ -4,6 +4,7 @@ import * as React from 'react';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
+import LibraryScreen from '../screens/LibraryScreen';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Search';
@@ -33,10 +34,10 @@ export default function BottomTabNavigator({ navigation, route }) {
         }}
       />
       <BottomTab.Screen
-        name="Signup"
-        component={LinksScreen}
+        name="Library"
+        component={LibraryScreen}
         options={{
-          title: 'Sign up',
+          title: 'Library',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
       />
@@ -52,7 +53,7 @@ function getHeaderTitle(route) {
       return 'Search for games';
     case 'Orders':
       return 'My orders';
-    case 'Signup':
-      return 'Sign up';
+    case 'Library':
+      return 'My library';
   }
 }
