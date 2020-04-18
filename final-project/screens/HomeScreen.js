@@ -1,6 +1,8 @@
 import firebaseApp from '../firebase.js';
 import * as WebBrowser from 'expo-web-browser';
-import * as React from 'react';
+// import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, Alert, TextInput } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MonoText } from '../components/StyledText';
@@ -12,11 +14,27 @@ var database = firebaseApp.database();
 export default function HomeScreen() {
   const [gameNameInput, setGameNameInput] = React.useState(null)
   const [keyInput, setKeyInput] = React.useState(null)
+  const [imageUrl, setImageUrl] = React.useState(null)
+  const [games, setGames] = React.useState([])
+  const [test, setTest] = React.useState("null")
+
+  useEffect(async () => {
+    const data = await getAllGames();
+    setGames(data);
+    console.log("Games:" + data);
+  }, []);
+
   return (
     <View style={styles.container}>
+
+      {games.map(game => {
+        return <Text>{JSON.stringify(game)}</Text>
+      })}
+
+
       {/* <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}> */}
 
-      <View style={styles.form}>
+      {/* <View style={styles.form}>
 
         <TextInput
           style={styles.input}
@@ -31,11 +49,20 @@ export default function HomeScreen() {
         >
         </TextInput>
 
-        <TouchableOpacity style={styles.button} onPress={() => addGameToDatabase(gameNameInput, keyInput)}>
+        <TextInput
+          style={styles.input}
+          placeholder="Image URL"
+          onChangeText={(text) => setImageUrl(text)}
+        >
+        </TextInput>
+
+        <TouchableOpacity style={styles.button} onPress={() => addGameToDatabase(gameNameInput, keyInput, imageUrl)}>
           <Text style={styles.buttonText}>Add game to database</Text>
         </TouchableOpacity>
 
-      </View>
+      </View> */}
+
+
 
       {/* </ScrollView> */}
 
@@ -43,15 +70,36 @@ export default function HomeScreen() {
   );
 }
 
-function addGameToDatabase(gameName, key) {
-  console.log(gameName);
-  console.log(key);
+function addGameToDatabase(gameName, key, imageUrl) {
+  // console.log(gameName);
+  // console.log(key);
   var ref = database.ref("games");
 
   ref.push({
     gameName: gameName,
-    key: key
+    key: key,
+    imageUrl: imageUrl
   })
+}
+
+// gets all games from database. Returns list of objects, weach with gameName, imageUrl, and key
+async function getAllGames() {
+  var ref = database.ref("games");
+  var games = null;
+  var gamesList = [];
+  await ref.once('value')
+    .then(function (data) {
+      // console.log(data.toJSON());
+      games = data.toJSON();
+    });
+
+  var keys = Object.keys(games);
+  for (const key in games) {
+    // console.log(games[key]);
+    gamesList.push(games[key]);
+  }
+
+  return gamesList;
 }
 
 HomeScreen.navigationOptions = {
