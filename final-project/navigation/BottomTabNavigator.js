@@ -7,7 +7,7 @@ import LinksScreen from '../screens/LinksScreen';
 import LibraryScreen from '../screens/LibraryScreen';
 
 const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Search';
+const INITIAL_ROUTE_NAME = 'Browse';
 
 export default function BottomTabNavigator({ navigation, route }) {
   // Set the header title on the parent stack navigator depending on the
@@ -18,10 +18,10 @@ export default function BottomTabNavigator({ navigation, route }) {
   return (
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
       <BottomTab.Screen
-        name="Search"
+        name="Browse"
         component={HomeScreen}
         options={{
-          title: 'Search for games',
+          title: 'Browse games',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="logo-game-controller-a" />,
         }}
       />
@@ -49,8 +49,8 @@ function getHeaderTitle(route) {
   const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
 
   switch (routeName) {
-    case 'Search':
-      return 'Search for games';
+    case 'Browse':
+      return 'Browse games';
     case 'Orders':
       return 'My orders';
     case 'Library':

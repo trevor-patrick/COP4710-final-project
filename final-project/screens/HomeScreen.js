@@ -3,7 +3,7 @@ import * as WebBrowser from 'expo-web-browser';
 // import * as React from 'react';
 import React, { useState, useEffect } from 'react';
 
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, Alert, TextInput } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, Alert, TextInput, FlatList } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MonoText } from '../components/StyledText';
 
@@ -27,10 +27,16 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
 
-      {games.map(game => {
-        return <Text>{JSON.stringify(game)}</Text>
-      })}
+      {/* <ScrollView> */}
 
+      {/* {games.map(game => {
+          return <Text>{JSON.stringify(game)}</Text>
+        })} */}
+      {/* </ScrollView> */}
+      <FlatList
+        data={games}
+        renderItem={({ item }) => <Item item={item} />}
+      />
 
       {/* <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}> */}
 
@@ -102,6 +108,19 @@ async function getAllGames() {
   return gamesList;
 }
 
+function Item({ item }) {
+  return (
+    <View style={styles.item}>
+      <Text style={styles.title}>{item.gameName}</Text>
+      <Image
+        style={{ width: 100, height: 100 }}
+        source={{ uri: item.imageUrl }}
+        resizeMode='contain'>
+      </Image>
+    </View>
+  );
+}
+
 HomeScreen.navigationOptions = {
   header: null,
 };
@@ -156,5 +175,14 @@ const styles = StyleSheet.create({
   },
   form: {
     width: "15%"
+  },
+  item: {
+    backgroundColor: '#ffffff',
+    padding: 10,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  title: {
+    fontSize: 16,
   }
 });
