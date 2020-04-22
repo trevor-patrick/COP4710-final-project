@@ -117,6 +117,7 @@ function Item({ item }) {
         source={{ uri: item.imageUrl }}
         resizeMode='contain'>
       </Image>
+      <Text style={styles.title}>${item.price}</Text>
     </View>
   );
 }
