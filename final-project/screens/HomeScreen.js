@@ -6,13 +6,17 @@ import React, { useState, useEffect } from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, Alert, TextInput, FlatList } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MonoText } from '../components/StyledText';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { render } from 'react-dom';
 
 var database = firebaseApp.database();
 
 export default function HomeScreen() {
 
   const [games, setGames] = React.useState([])
+  const [reducedGames, setReducedGames] = React.useState([])
   const [test, setTest] = React.useState("null")
+  const [searchTitle, setSearchTitle] = React.useState("null")
 
   useEffect(async () => {
     const data = await getAllGames();
@@ -25,14 +29,30 @@ export default function HomeScreen() {
 
       <ScrollView>
 
-      <FlatList
-        data={games}
-        renderItem={({ item }) => <Item item={item} />}
-      />
+        <View style={{ flexDirection: "row" }}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Search by title..."
+            maxLength={20}
+            onChangeText={(text) => setSearchTitle(text)}
+          />
+
+          <TouchableOpacity onPress={() => {
+            setReducedGames(reduceByTitle(games, searchTitle))
+          }}>
+            <Icon name="search" style={styles.icon}>
+            </Icon>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          data={(reducedGames[0] != null) ? reducedGames : games}
+          renderItem={({ item }) => <Item item={item} />}
+        />
 
       </ScrollView>
 
-    </View>
+    </View >
   );
 }
 
@@ -54,6 +74,24 @@ async function getAllGames() {
   }
 
   return gamesList;
+}
+
+// this function just changes whats in the games state 
+function reduceByTitle(allGames, title) {
+  if (title == "" || title == null) {
+    return [];
+  }
+
+  var gamesWithTitle = [];
+
+  // copy allGames to gamesWithQuery, only games with title 'LIKE' query
+  for (let i = 0; i < allGames.length; i++) {
+    if (allGames[i].gameName.includes(title)) {
+      gamesWithTitle.push(allGames[i]);
+    }
+  }
+
+  return gamesWithTitle;
 }
 
 function Item({ item }) {
@@ -133,5 +171,44 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
+  },
+  textInput: {
+    borderColor: '#ffffff',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    height: 35,
+    fontSize: 15,
+    paddingLeft: 20,
+    paddingRight: 20,
+    textAlign: "left",
+    width: 200,
+    backgroundColor: '#ffffff',
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  searchButton: {
+    borderColor: '#ffffff',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    height: 35,
+    fontSize: 15,
+    paddingLeft: 20,
+    paddingRight: 20,
+    textAlign: "center",
+    width: 150,
+    backgroundColor: '#ffffff',
+    marginVertical: 8,
+    // marginHorizontal: 8,
+    // marginHorizontal: ,
+  },
+  icon: {
+    marginVertical: 8,
+    padding: 9,
+    fontSize: 18
+    // marginHorizontal: 16,
   }
 });
