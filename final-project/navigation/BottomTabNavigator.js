@@ -5,6 +5,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import LibraryScreen from '../screens/LibraryScreen';
+import ToolsScreen from '../screens/ToolsScreen';
 
 const BottomTab = createBottomTabNavigator();
 const INITIAL_ROUTE_NAME = 'Browse';
@@ -41,6 +42,14 @@ export default function BottomTabNavigator({ navigation, route }) {
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
       />
+      <BottomTab.Screen
+        name="Tools"
+        component={ToolsScreen}
+        options={{
+          title: 'Tools',
+          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
+        }}
+      />
     </BottomTab.Navigator>
   );
 }
@@ -55,5 +64,7 @@ function getHeaderTitle(route) {
       return 'My orders';
     case 'Library':
       return 'My library';
+    case 'Tools':
+      return 'Admin Tools';
   }
 }

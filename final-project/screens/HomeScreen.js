@@ -9,12 +9,8 @@ import { MonoText } from '../components/StyledText';
 
 var database = firebaseApp.database();
 
-
-
 export default function HomeScreen() {
-  const [gameNameInput, setGameNameInput] = React.useState(null)
-  const [keyInput, setKeyInput] = React.useState(null)
-  const [imageUrl, setImageUrl] = React.useState(null)
+
   const [games, setGames] = React.useState([])
   const [test, setTest] = React.useState("null")
 
@@ -27,65 +23,17 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
 
-      {/* <ScrollView> */}
+      <ScrollView>
 
-      {/* {games.map(game => {
-          return <Text>{JSON.stringify(game)}</Text>
-        })} */}
-      {/* </ScrollView> */}
       <FlatList
         data={games}
         renderItem={({ item }) => <Item item={item} />}
       />
 
-      {/* <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}> */}
-
-      {/* <View style={styles.form}>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Game name"
-          onChangeText={(text) => setGameNameInput(text)}>
-        </TextInput>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Key"
-          onChangeText={(text) => setKeyInput(text)}
-        >
-        </TextInput>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Image URL"
-          onChangeText={(text) => setImageUrl(text)}
-        >
-        </TextInput>
-
-        <TouchableOpacity style={styles.button} onPress={() => addGameToDatabase(gameNameInput, keyInput, imageUrl)}>
-          <Text style={styles.buttonText}>Add game to database</Text>
-        </TouchableOpacity>
-
-      </View> */}
-
-
-
-      {/* </ScrollView> */}
+      </ScrollView>
 
     </View>
   );
-}
-
-function addGameToDatabase(gameName, key, imageUrl) {
-  // console.log(gameName);
-  // console.log(key);
-  var ref = database.ref("games");
-
-  ref.push({
-    gameName: gameName,
-    key: key,
-    imageUrl: imageUrl
-  })
 }
 
 // gets all games from database. Returns list of objects, weach with gameName, imageUrl, and key
