@@ -3,14 +3,15 @@ import * as WebBrowser from 'expo-web-browser';
 // import * as React from 'react';
 import React, { useState, useEffect } from 'react';
 
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, Alert, TextInput, FlatList } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, FlatList, Alert } from 'react-native';
+import { ScrollView, LongPressGestureHandler } from 'react-native-gesture-handler';
 import { MonoText } from '../components/StyledText';
+import { MaterialIcons } from '@expo/vector-icons';
 
 var database = firebaseApp.database();
 
 export default function HomeScreen() {
-
+  const [modalOpen, setModalOpen] = useState(false);
   const [games, setGames] = React.useState([])
   const [test, setTest] = React.useState("null")
 
@@ -20,16 +21,36 @@ export default function HomeScreen() {
     console.log("Games:" + data);
   }, []);
 
+  // used to delete games from key and name passed 
+  const pressHandler = (gameName, key) =>{
+    
+    database.ref("games").on("value", function(snapshot){
+      snapshot.forEach(function(child){
+        var temp = child.val();
+        if(temp.gameName == gameName && temp.key == key){
+          database.ref("games").child(child.key).remove();
+        }
+      })
+    })
+    // removes game from screen without having to refresh page
+    setGames((prevGames) => {
+      return prevGames.filter(games => games.gameName != gameName); 
+    });
+  }
   return (
     <View style={styles.container}>
-
       <ScrollView>
-
       <FlatList
+      
         data={games}
-        renderItem={({ item }) => <Item item={item} />}
+        renderItem={({ item }) => (
+          // added on click event
+          <TouchableOpacity onPress={() =>  pressHandler(item.gameName, item.key)}
+          >
+          <Item item={item} />
+          </TouchableOpacity>
+        )} 
       />
-
       </ScrollView>
 
     </View>
@@ -65,7 +86,7 @@ function Item({ item }) {
         source={{ uri: item.imageUrl }}
         resizeMode='contain'>
       </Image>
-      <Text style={styles.title}>${item.price}</Text>
+      <Text style={{marginLeft: 39}}>${item.price}</Text>
     </View>
   );
 }
@@ -134,4 +155,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
   }
+
 });
