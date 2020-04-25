@@ -10,6 +10,8 @@ import { MonoText } from '../components/StyledText';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { render } from 'react-dom';
 import { FA5Style } from '@expo/vector-icons/build/FontAwesome5';
+import Moment from 'moment';
+import moment from 'moment';
 
 var database = firebaseApp.firestore();
 
@@ -229,7 +231,10 @@ function reduceByName(allOrders, name) {
 function Item({ item }) {
   // TODO: look up game image by name
 
+
+  Moment.locale('en');
   var url;
+  var momentTime = item.orderTime;
   /*
   games.forEach(g =>{
     if(g.gameName == gameName){
@@ -250,6 +255,8 @@ function Item({ item }) {
       </Image>
       <br/>
       <Text style={styles.title}>Order total: ${item.gamePrice}</Text>
+
+      <Text style={styles.title}>Purchased: {moment(momentTime).format('L')}</Text>
     </View>
   );
 }

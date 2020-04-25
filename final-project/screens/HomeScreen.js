@@ -189,11 +189,13 @@ function Item({ item }) {
   return (
     <View style={styles.item}>
       <Text style={styles.title}>{item.gameName}</Text>
+      <br/>
       <Image
         style={{ width: 100, height: 100 }}
         source={{ uri: item.imageUrl }}
         resizeMode='contain'>
       </Image>
+      <br/>
       <Text style={styles.title}>${item.price}</Text>
     </View>
   );

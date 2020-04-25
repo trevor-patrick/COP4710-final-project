@@ -17,6 +17,7 @@ export default function ToolsScreen() {
   const [custNameInput, setCustNameInput] = React.useState(null)
   const [custEmailInput, setCustEmailInput] = React.useState(null)
   const [gameInput, setGameInput] = React.useState(null)
+  const [gameImage, setGameImageInput] = React.useState(null)
   const [orderPrice, setOrderPrice] = React.useState(null)
 
 
@@ -81,13 +82,18 @@ export default function ToolsScreen() {
         />
         <TextInput
           style={styles.textInput}
+          placeholder="Game Image"
+          onChangeText={(text) => setGameImageInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
           placeholder="Price (USD)"
           maxLength={40}
           onChangeText={(text) => setOrderPrice(text)}
         />
         <TouchableOpacity
           style={styles.insertButton}
-          onPress={() => addOrderToDatabase(custNameInput, custEmailInput, gameInput, orderPrice)}
+          onPress={() => addOrderToDatabase(custNameInput, custEmailInput, gameInput, orderPrice, gameImage)}
         >
           <Text style={styles.text}>Add Order</Text>
         </TouchableOpacity>
@@ -134,8 +140,6 @@ export default function ToolsScreen() {
 }
 
 function addGameToDatabase(gameName, key, imageUrl, price) {
-  // console.log(gameName);
-  // console.log(key);
   var ref = database.collection("games");
 
   ref.add({
@@ -145,19 +149,22 @@ function addGameToDatabase(gameName, key, imageUrl, price) {
     price: price
   })
   
+  alert("Game added!");
 }
 
-function addOrderToDatabase(custName, custEmail, gameName, price, orderTime) {
+function addOrderToDatabase(custName, custEmail, gameName, price, gameImage) {
   var ref = database.collection("orders");
   var current_time = Date.now()
 
-  ref.add({
+  var new_order = {
     custName: custName,
     custEmail: custEmail,
     gameName: gameName,
     gamePrice: price,
-    orderTime: current_time 
-  })
+    orderTime: current_time,
+    image: gameImage
+  }
+  ref.add(new_order);
 
   alert("Order created!");
 }
