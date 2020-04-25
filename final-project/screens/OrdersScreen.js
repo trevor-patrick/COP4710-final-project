@@ -242,11 +242,13 @@ function Item({ item }) {
       <Text style={styles.title}>Customer: {item.custName}</Text>
       <Text style={styles.title}>Email: {item.custEmail}</Text>
       <Text style={styles.title}>Game: {item.gameName}</Text>
+      <br/>
       <Image
         style={{ width: 100, height: 100 }}
-        source={{ uri: item.imageUrl }}
+        source={{ uri: item.image }}
         resizeMode='contain'>
       </Image>
+      <br/>
       <Text style={styles.title}>Order total: ${item.gamePrice}</Text>
     </View>
   );
@@ -327,7 +329,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     textAlign: "left",
-    width: 200,
+    width: 230,
     backgroundColor: '#ffffff',
     marginVertical: 8,
     marginHorizontal: 16,

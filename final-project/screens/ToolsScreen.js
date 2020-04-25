@@ -93,6 +93,41 @@ export default function ToolsScreen() {
         </TouchableOpacity>
 
 
+        <br/>
+        <br/>
+        <br/>
+
+        <Text style={styles.text}>Add customer to database</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Customer Name"
+          maxLength={40}
+          onChangeText={(text) => setCustNameInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Customer Email"
+          maxLength={40}
+          onChangeText={(text) => setCustEmailInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Game Name"
+          onChangeText={(text) => setGameInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Price (USD)"
+          maxLength={40}
+          onChangeText={(text) => setOrderPrice(text)}
+        />
+        <TouchableOpacity
+          style={styles.insertButton}
+          onPress={() => addOrderToDatabase(custNameInput, custEmailInput, gameInput, orderPrice)}
+        >
+          <Text style={styles.text}>Add Customer</Text>
+        </TouchableOpacity>
+
       </View>
     </ScrollView >
   );
