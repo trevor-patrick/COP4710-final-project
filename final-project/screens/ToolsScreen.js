@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 
-var database = firebaseApp.database();
+var database = firebaseApp.firestore();
 
 export default function ToolsScreen() {
   const [gameNameInput, setGameNameInput] = React.useState(null)
@@ -24,6 +24,7 @@ export default function ToolsScreen() {
         <TextInput
           style={styles.textInput}
           placeholder="Game Title"
+          maxLength={40}
           onChangeText={(text) => setGameNameInput(text)}
         />
         <TextInput
@@ -39,6 +40,7 @@ export default function ToolsScreen() {
         <TextInput
           style={styles.textInput}
           placeholder="Download Key"
+          maxLength={40}
           onChangeText={(text) => setKeyInput(text)}
         />
         <TouchableOpacity
@@ -55,14 +57,15 @@ export default function ToolsScreen() {
 function addGameToDatabase(gameName, key, imageUrl, price) {
   // console.log(gameName);
   // console.log(key);
-  var ref = database.ref("games");
+  var ref = database.collection("games");
 
-  ref.push({
+  ref.add({
     gameName: gameName,
     key: key,
     imageUrl: imageUrl,
     price: price
   })
+  
 }
 
 const styles = StyleSheet.create({
