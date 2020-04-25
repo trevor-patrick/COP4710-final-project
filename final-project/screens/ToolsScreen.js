@@ -15,6 +15,7 @@ export default function ToolsScreen() {
   const [price, setPrice] = React.useState(null)
 
   const [custNameInput, setCustNameInput] = React.useState(null)
+  const [custEmailInput, setCustEmailInput] = React.useState(null)
   const [gameInput, setGameInput] = React.useState(null)
   const [orderPrice, setOrderPrice] = React.useState(null)
 
@@ -69,6 +70,12 @@ export default function ToolsScreen() {
         />
         <TextInput
           style={styles.textInput}
+          placeholder="Customer Email"
+          maxLength={40}
+          onChangeText={(text) => setCustEmailInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
           placeholder="Game Name"
           onChangeText={(text) => setGameInput(text)}
         />
@@ -80,7 +87,7 @@ export default function ToolsScreen() {
         />
         <TouchableOpacity
           style={styles.insertButton}
-          onPress={() => addOrderToDatabase(custNameInput, gameInput, orderPrice)}
+          onPress={() => addOrderToDatabase(custNameInput, custEmailInput, gameInput, orderPrice)}
         >
           <Text style={styles.text}>Add Order</Text>
         </TouchableOpacity>
@@ -105,16 +112,13 @@ function addGameToDatabase(gameName, key, imageUrl, price) {
   
 }
 
-function addOrderToDatabase(custName, gameName, price, orderTime) {
-
-  console.log(gameName);
-  console.log(custName);
-
+function addOrderToDatabase(custName, custEmail, gameName, price, orderTime) {
   var ref = database.collection("orders");
   var current_time = Date.now()
 
   ref.add({
     custName: custName,
+    custEmail: custEmail,
     gameName: gameName,
     gamePrice: price,
     orderTime: current_time 
