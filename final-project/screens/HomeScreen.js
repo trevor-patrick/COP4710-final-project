@@ -44,11 +44,22 @@ export default function HomeScreen() {
         database.collection("games").doc(item.key).delete();
       }
     })
-    // removes game from screen without having to refresh page
+    reducedGames.forEach(item =>{
+      if(item.gameName == gameName){
+        database.collection("games").doc(item.key).delete();
+      }
+    })
+    // removes game from games state without having to refresh page
     setGames((prevGames) => {
       return prevGames.filter(games => games.gameName != gameName);
     });
+
+    // removes game from reducedGames state without having to refresh page
+    setReducedGames((prevGames) => {
+      return prevGames.filter(reducedGames => reducedGames.gameName != gameName);
+    });
   }
+
   //function to sort data from database
   function sortAscending() {
     var ref = database.collection("games").orderBy("gameName");
