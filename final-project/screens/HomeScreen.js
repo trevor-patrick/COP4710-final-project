@@ -3,77 +3,157 @@ import * as WebBrowser from 'expo-web-browser';
 // import * as React from 'react';
 import React, { useState, useEffect } from 'react';
 
-import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, Button, Alert, TextInput, FlatList } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View, MaterialIcons, TextInput, FlatList, Button } from 'react-native';
+import { ConfirmDialog } from 'react-native-simple-dialogs';
 import { ScrollView } from 'react-native-gesture-handler';
 import { MonoText } from '../components/StyledText';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { render } from 'react-dom';
+import { FA5Style } from '@expo/vector-icons/build/FontAwesome5';
 
-var database = firebaseApp.database();
+var database = firebaseApp.firestore();
 
 export default function HomeScreen() {
-
   const [games, setGames] = React.useState([])
+  const [loading, setLoading] = React.useState(true)
   const [reducedGames, setReducedGames] = React.useState([])
   const [test, setTest] = React.useState("null")
   const [searchTitle, setSearchTitle] = React.useState("null")
 
-  useEffect(async () => {
-    const data = await getAllGames();
-    setGames(data);
-    console.log("Games:" + data);
+  useEffect(() => {
+
+    database.collection("games").onSnapshot(querySnapshot => {
+      const games = [];
+      querySnapshot.forEach(documentSnapshot => {
+        games.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+  
+      });
+      setGames(games);
+      setLoading(false);
+    });
+  
   }, []);
+
+  //function to delete item from database
+  const pressHandler = (gameName) => {
+    games.forEach(item =>{
+      if(item.gameName == gameName){
+        database.collection("games").doc(item.key).delete();
+      }
+    })
+    // removes game from screen without having to refresh page
+    setGames((prevGames) => {
+      return prevGames.filter(games => games.gameName != gameName);
+    });
+  }
+  //function to sort data from database
+  function sortAscending() {
+    var ref = database.collection("games").orderBy("gameName");
+    var games = null;
+    var gamesList = [];
+    ref.onSnapshot(querySnapshot => {
+      const games = [];
+      querySnapshot.forEach(documentSnapshot => {
+        games.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+      });
+      setGames(games);
+      setLoading(false);
+    });
+  }
+  //function to sort descending by price
+  function sortDescending(){
+    var ref = database.collection("games").orderBy("price", "desc");
+    var games = null;
+    var gamesList = [];
+    ref.onSnapshot(querySnapshot => {
+      const games = [];
+      querySnapshot.forEach(documentSnapshot => {
+        games.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+      });
+      setGames(games);
+      setLoading(false);
+    });
+  }
 
   return (
     <View style={styles.container}>
 
       <ScrollView>
 
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row"}}>
           <TextInput
             style={styles.textInput}
             placeholder="Search by title..."
             maxLength={20}
             onChangeText={(text) => setSearchTitle(text)}
           />
-
+    
           <TouchableOpacity onPress={() => {
             setReducedGames(reduceByTitle(games, searchTitle))
           }}>
             <Icon name="search" style={styles.icon}>
             </Icon>
+            
           </TouchableOpacity>
-        </View>
+          <View style={{flexDirection:"row", paddingTop: 8}}>
+          <View style={{paddingLeft: 8}}>
+            <Button title="Sort by Name" onPress={() => sortAscending()}/>
+            </View>
+            <View style={{paddingLeft: 8}}>
+            <Button title="Sort by Price" onPress={() => sortDescending()}/>
+            </View>
+          </View>
+         </View>
+        
 
         <FlatList
           data={(reducedGames[0] != null) ? reducedGames : games}
-          renderItem={({ item }) => <Item item={item} />}
+          renderItem={({ item }) => (
+            // added on click event
+            <TouchableOpacity onPress={() => pressHandler(item.gameName, item.key)}>
+              <Item item={item} />
+            </TouchableOpacity>
+          )}
         />
-
       </ScrollView>
 
     </View >
   );
 }
 
+
 // gets all games from database. Returns list of objects, weach with gameName, imageUrl, and key
-async function getAllGames() {
-  var ref = database.ref("games");
+function getAllGames() {
+  var ref = database.collection("games");
   var games = null;
   var gamesList = [];
-  await ref.once('value')
-    .then(function (data) {
-      // console.log(data.toJSON());
-      games = data.toJSON();
+  ref.get().then(function (querySnapshot) {
+    querySnapshot.forEach(function (doc) {
+      games.push(doc.data());
     });
+    // console.log(doc);
+    // gamesList.push(doc);
+  });
 
-  var keys = Object.keys(games);
+  var keys = Object(games);
   for (const key in games) {
     // console.log(games[key]);
     gamesList.push(games[key]);
   }
+  gamesList.forEach(function(test){
+    console.log(test);
+  });
 
-  return gamesList;
+return gamesList;
 }
 
 // this function just changes whats in the games state 
@@ -210,5 +290,9 @@ const styles = StyleSheet.create({
     padding: 9,
     fontSize: 18
     // marginHorizontal: 16,
+  },
+  buttonSort: {
+    margin: 200
   }
+
 });
