@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import OrdersScreen from '../screens/OrdersScreen';
 import LibraryScreen from '../screens/LibraryScreen';
 import ToolsScreen from '../screens/ToolsScreen';
 
@@ -28,7 +28,7 @@ export default function BottomTabNavigator({ navigation, route }) {
       />
       <BottomTab.Screen
         name="Orders"
-        component={LinksScreen}
+        component={OrdersScreen}
         options={{
           title: 'Orders',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code" />,
@@ -61,7 +61,7 @@ function getHeaderTitle(route) {
     case 'Browse':
       return 'Browse games';
     case 'Orders':
-      return 'My orders';
+      return 'Customer Orders';
     case 'Library':
       return 'My library';
     case 'Tools':
