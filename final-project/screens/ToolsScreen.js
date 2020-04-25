@@ -14,12 +14,18 @@ export default function ToolsScreen() {
   const [imageUrl, setImageUrl] = React.useState(null)
   const [price, setPrice] = React.useState(null)
 
+  const [custNameInput, setCustNameInput] = React.useState(null)
+  const [gameInput, setGameInput] = React.useState(null)
+  const [orderPrice, setOrderPrice] = React.useState(null)
+
+
   return (
 
     // <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
     /* <Prompt message="Are you sure you want to leave?" /> */
     < ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} >
       <View style={styles.inputContainer}>
+
         <Text style={styles.text}>Add game to database</Text>
         <TextInput
           style={styles.textInput}
@@ -47,8 +53,39 @@ export default function ToolsScreen() {
           style={styles.insertButton}
           onPress={() => addGameToDatabase(gameNameInput, keyInput, imageUrl, price)}
         >
-          <Text style={styles.text}>Add</Text>
+          <Text style={styles.text}>Add Game</Text>
         </TouchableOpacity>
+
+        <br/>
+        <br/>
+        <br/>
+
+        <Text style={styles.text}>Add order to database</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Customer Name"
+          maxLength={40}
+          onChangeText={(text) => setCustNameInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Game Name"
+          onChangeText={(text) => setGameInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Price (USD)"
+          maxLength={40}
+          onChangeText={(text) => setOrderPrice(text)}
+        />
+        <TouchableOpacity
+          style={styles.insertButton}
+          onPress={() => addOrderToDatabase(custNameInput, gameInput, orderPrice)}
+        >
+          <Text style={styles.text}>Add Order</Text>
+        </TouchableOpacity>
+
+
       </View>
     </ScrollView >
   );
@@ -66,6 +103,24 @@ function addGameToDatabase(gameName, key, imageUrl, price) {
     price: price
   })
   
+}
+
+function addOrderToDatabase(custName, gameName, price, orderTime) {
+
+  console.log(gameName);
+  console.log(custName);
+
+  var ref = database.collection("orders");
+  var current_time = Date.now()
+
+  ref.add({
+    custName: custName,
+    gameName: gameName,
+    gamePrice: price,
+    orderTime: current_time 
+  })
+
+  alert("Order created!");
 }
 
 const styles = StyleSheet.create({

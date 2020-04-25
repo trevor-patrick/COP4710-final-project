@@ -59,7 +59,7 @@ function getHeaderTitle(route) {
 
   switch (routeName) {
     case 'Browse':
-      return 'Browse games';
+      return 'Database Tools';
     case 'Orders':
       return 'Customer Orders';
     case 'Library':
