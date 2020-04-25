@@ -22,7 +22,7 @@ export default function OrdersScreen() {
 
   useEffect(() => {
 
-    database.collection("games").onSnapshot(querySnapshot => {
+    database.collection("orders").onSnapshot(querySnapshot => {
       const games = [];
       querySnapshot.forEach(documentSnapshot => {
         games.push({
@@ -133,7 +133,7 @@ export default function OrdersScreen() {
 
 // gets all games from database. Returns list of objects, weach with gameName, imageUrl, and key
 function getAllGames() {
-  var ref = database.collection("games");
+  var ref = database.collection("orders");
   var games = null;
   var gamesList = [];
   ref.get().then(function (querySnapshot) {
@@ -175,15 +175,17 @@ function reduceByTitle(allGames, title) {
 }
 
 function Item({ item }) {
+  // TODO: look up game image by name
   return (
     <View style={styles.item}>
-      <Text style={styles.title}>{item.gameName}</Text>
+      <Text style={styles.title}>Customer: {item.custName}</Text>
+      <Text style={styles.title}>Game: {item.gameName}</Text>
       <Image
         style={{ width: 100, height: 100 }}
         source={{ uri: item.imageUrl }}
         resizeMode='contain'>
       </Image>
-      <Text style={styles.title}>${item.price}</Text>
+      <Text style={styles.title}>Order total: ${item.gamePrice}</Text>
     </View>
   );
 }
