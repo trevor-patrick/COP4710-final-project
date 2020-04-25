@@ -4,7 +4,7 @@ import * as React from 'react';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import OrdersScreen from '../screens/OrdersScreen';
-import LibraryScreen from '../screens/LibraryScreen';
+import CustomersScreen from '../screens/CustomersScreen';
 import ToolsScreen from '../screens/ToolsScreen';
 
 const BottomTab = createBottomTabNavigator();
@@ -19,10 +19,10 @@ export default function BottomTabNavigator({ navigation, route }) {
   return (
     <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
       <BottomTab.Screen
-        name="Browse"
+        name="Inventory"
         component={HomeScreen}
         options={{
-          title: 'Browse games',
+          title: 'Inventory',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="logo-game-controller-a" />,
         }}
       />
@@ -35,10 +35,10 @@ export default function BottomTabNavigator({ navigation, route }) {
         }}
       />
       <BottomTab.Screen
-        name="Library"
-        component={LibraryScreen}
+        name="Customers"
+        component={CustomersScreen}
         options={{
-          title: 'Library',
+          title: 'Customer Manager',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
       />
@@ -58,12 +58,12 @@ function getHeaderTitle(route) {
   const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
 
   switch (routeName) {
-    case 'Browse':
-      return 'Database Tools';
+    case 'Inventory':
+      return 'Inventory';
     case 'Orders':
       return 'Customer Orders';
-    case 'Library':
-      return 'My library';
+    case 'Customers':
+      return 'Customer Manager';
     case 'Tools':
       return 'Admin Tools';
   }
