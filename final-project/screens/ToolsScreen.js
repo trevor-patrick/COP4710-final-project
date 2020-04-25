@@ -24,25 +24,21 @@ export default function ToolsScreen() {
         <TextInput
           style={styles.textInput}
           placeholder="Game Title"
-          maxLength={20}
           onChangeText={(text) => setGameNameInput(text)}
         />
         <TextInput
           style={styles.textInput}
           placeholder="Price (USD)"
-          maxLength={20}
           onChangeText={(text) => setPrice(text)}
         />
         <TextInput
           style={styles.textInput}
           placeholder="Image URL"
-          maxLength={20}
           onChangeText={(text) => setImageUrl(text)}
         />
         <TextInput
           style={styles.textInput}
           placeholder="Download Key"
-          maxLength={20}
           onChangeText={(text) => setKeyInput(text)}
         />
         <TouchableOpacity
