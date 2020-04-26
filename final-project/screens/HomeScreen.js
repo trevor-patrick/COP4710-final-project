@@ -38,25 +38,25 @@ export default function HomeScreen() {
   }, []);
 
   //function to delete item from database
-  const pressHandler = (gameName) => {
+  const pressHandler = (gameName, key) => {
     games.forEach(item =>{
-      if(item.gameName == gameName){
+      if(item.gameName == gameName && item.key == key){
         database.collection("games").doc(item.key).delete();
       }
     })
     reducedGames.forEach(item =>{
-      if(item.gameName == gameName){
+      if(item.gameName == gameName && item.key == key){
         database.collection("games").doc(item.key).delete();
       }
     })
     // removes game from games state without having to refresh page
     setGames((prevGames) => {
-      return prevGames.filter(games => games.gameName != gameName);
+      return prevGames.filter(games => games.key != key);
     });
 
     // removes game from reducedGames state without having to refresh page
     setReducedGames((prevGames) => {
-      return prevGames.filter(reducedGames => reducedGames.gameName != gameName);
+      return prevGames.filter(reducedGames => reducedGames.key != key);
     });
   }
 
