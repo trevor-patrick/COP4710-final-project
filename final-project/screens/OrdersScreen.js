@@ -10,17 +10,34 @@ import { MonoText } from '../components/StyledText';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { render } from 'react-dom';
 import { FA5Style } from '@expo/vector-icons/build/FontAwesome5';
+import Moment from 'moment';
+import moment from 'moment';
 
 var database = firebaseApp.firestore();
 
 export default function OrdersScreen() {
   const [games, setGames] = React.useState([])
+  const [orders, setOrders] = React.useState([])
   const [loading, setLoading] = React.useState(true)
-  const [reducedGames, setReducedGames] = React.useState([])
+  const [reducedOrders, setReducedOrders] = React.useState([])
   const [test, setTest] = React.useState("null")
-  const [searchTitle, setSearchTitle] = React.useState("null")
+  const [searchName, setSearchName] = React.useState("null")
 
   useEffect(() => {
+
+    database.collection("orders").onSnapshot(querySnapshot => {
+      const orders = [];
+      querySnapshot.forEach(documentSnapshot => {
+        orders.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+  
+      });
+      setOrders(orders);
+      setLoading(false);
+    });
+
 
     database.collection("games").onSnapshot(querySnapshot => {
       const games = [];
@@ -38,16 +55,20 @@ export default function OrdersScreen() {
   }, []);
 
   //function to delete item from database
-  const pressHandler = (gameName) => {
-    games.forEach(item =>{
-      if(item.gameName == gameName){
-        database.collection("games").doc(item.key).delete();
-      }
-    })
+  const pressHandler = (item) => {
+    if (item == null)
+      return;
+
+    database.collection("orders").doc(item.key).delete();
+
     // removes game from screen without having to refresh page
-    setGames((prevGames) => {
-      return prevGames.filter(games => games.gameName != gameName);
+    setOrders((prevOrders) => {
+      return prevOrders.filter(orders => orders.key != item.key);
     });
+
+    setReducedOrders((prevReducedOrders) => {
+      return prevReducedOrders.filter(orders => orders.key != item.key);
+    })
   }
   //function to sort data from database
   function sortAscending() {
@@ -92,13 +113,14 @@ export default function OrdersScreen() {
         <View style={{ flexDirection: "row"}}>
           <TextInput
             style={styles.textInput}
-            placeholder="Search by title..."
+            placeholder="Search by customer name..."
             maxLength={20}
-            onChangeText={(text) => setSearchTitle(text)}
+            onChangeText={(text) => setSearchName(text)}
+            defaultValue=""
           />
     
           <TouchableOpacity onPress={() => {
-            setReducedGames(reduceByTitle(games, searchTitle))
+            setReducedOrders(reduceByName(orders, searchName))
           }}>
             <Icon name="search" style={styles.icon}>
             </Icon>
@@ -116,10 +138,10 @@ export default function OrdersScreen() {
         
 
         <FlatList
-          data={(reducedGames[0] != null) ? reducedGames : games}
+          data={(reducedOrders[0] != null) ? reducedOrders: orders}
           renderItem={({ item }) => (
             // added on click event
-            <TouchableOpacity onPress={() => pressHandler(item.gameName, item.key)}>
+            <TouchableOpacity onPress={() => pressHandler(item)}>
               <Item item={item} />
             </TouchableOpacity>
           )}
@@ -156,34 +178,85 @@ function getAllGames() {
 return gamesList;
 }
 
+// gets all orders from database
+function getAllOrders() {
+  var ref = database.collection("orders");
+  var games = null;
+  var gamesList = [];
+  ref.get().then(function (querySnapshot) {
+    querySnapshot.forEach(function (doc) {
+      games.push(doc.data());
+    });
+    // console.log(doc);
+    // gamesList.push(doc);
+  });
+
+  var keys = Object(games);
+  for (const key in games) {
+    // console.log(games[key]);
+    gamesList.push(games[key]);
+  }
+  gamesList.forEach(function(test){
+    console.log(test);
+  });
+
+return gamesList;
+}
+
+
 // this function just changes whats in the games state 
-function reduceByTitle(allGames, title) {
-  if (title == "" || title == null) {
+function reduceByName(allOrders, name) {
+  if (name == "" || name == null || allOrders.length == 0) {
     return [];
   }
 
-  var gamesWithTitle = [];
+  var ordersWithTitle = [];
 
-  // copy allGames to gamesWithQuery, only games with title 'LIKE' query
-  for (let i = 0; i < allGames.length; i++) {
-    if (allGames[i].gameName.includes(title)) {
-      gamesWithTitle.push(allGames[i]);
+  // copy allOrders to gamesWithQuery, only games with title 'LIKE' query
+  for (let i = 0; i < allOrders.length; i++) {
+    var curOrder = allOrders[i];
+
+    if (curOrder.custName == null)
+      return [];
+
+    if (curOrder.custName.includes(name)) {
+      ordersWithTitle.push(curOrder);
     }
   }
 
-  return gamesWithTitle;
+  return ordersWithTitle;
 }
 
+// displays an order item
 function Item({ item }) {
+  // TODO: look up game image by name
+
+
+  Moment.locale('en');
+  var url;
+  var momentTime = item.orderTime;
+  /*
+  games.forEach(g =>{
+    if(g.gameName == gameName){
+     url = database.collection("games").doc(g.key).get();}
+    });
+    */
+
   return (
     <View style={styles.item}>
-      <Text style={styles.title}>{item.gameName}</Text>
+      <Text style={styles.title}>Customer: {item.custName}</Text>
+      <Text style={styles.title}>Email: {item.custEmail}</Text>
+      <Text style={styles.title}>Game: {item.gameName}</Text>
+      <br/>
       <Image
         style={{ width: 100, height: 100 }}
-        source={{ uri: item.imageUrl }}
+        source={{ uri: item.image }}
         resizeMode='contain'>
       </Image>
-      <Text style={styles.title}>${item.price}</Text>
+      <br/>
+      <Text style={styles.title}>Order total: ${item.gamePrice}</Text>
+
+      <Text style={styles.title}>Purchased: {moment(momentTime).format('L')}</Text>
     </View>
   );
 }
@@ -263,7 +336,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     textAlign: "left",
-    width: 200,
+    width: 230,
     backgroundColor: '#ffffff',
     marginVertical: 8,
     marginHorizontal: 16,

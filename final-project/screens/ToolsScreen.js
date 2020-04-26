@@ -23,16 +23,12 @@ export default function ToolsScreen() {
 
   async function addGameToDatabase(gameName, key, imageUrl, price) {
     // check if game already exists with same key
-
     var ref = database.collection("games");
     var valid = false;
     const snapshot = await ref.get();
-    // CONCAT INPUT KEY HERE.. there is where I left off
     const keysInDB = snapshot.docs.map(doc => doc.data().key);
-    // console.log(docs)
-    // console.log(new Set(docs).size)
-    // const duplicateKeys = !(docs.length === new Set(docs).size);
-    // console.log("Duplicate: " + duplicateKeys);
+
+    console.log("calling addGameToDatabase()...")
 
     if (keysInDB.includes(keyInput)) {
       setError("* A game with this key exists already")
@@ -60,16 +56,93 @@ export default function ToolsScreen() {
       setKeyInput("");
       setImageUrl("");
       setPrice("");
+
+      alert("Game created!");
+    }
+  }
+
+  async function addOrderToDatabase(custName, custEmail, gameName, price, gameImage) {
+    console.log("calling addOrderToDatabase()...");
+    var valid = false;
+
+    // I don't know why this prevents the data getting saved to DB twice (bug)
+    const snapshot = await database.collection("games").get();
+
+    var ref = database.collection("orders");
+    var current_time = Date.now()
+
+    var new_order = {
+      custName: custName,
+      custEmail: custEmail,
+      gameName: gameName,
+      gamePrice: price,
+      orderTime: current_time,
+      image: gameImage
     }
 
+    if (custName == null || custName == "" ||
+      custEmail == null || custEmail == "" ||
+      gameName == null || gameName == "" ||
+      price == null || price == "" ||
+      gameImage == null || gameImage == "") {
+    }
+    else {
+      valid = true;
+    }
 
+    if (valid) {
+      ref.add(new_order);
 
+      setCustNameInput("");
+      setCustEmailInput("");
+      setGameInput("");
+      setOrderPrice("");
+      setGameImageInput("");
+
+      alert("Order created!");
+    }
+  }
+
+  async function addCustomerToDatabase(custName, custEmail, gameName, price) {
+    console.log("calling addCustomerToDatabase()...");
+    var valid = false;
+
+    // I don't know why this prevents the data getting saved to DB twice (bug)
+    const snapshot = await database.collection("games").get();
+
+    var ref = database.collection("customers");
+    var current_time = Date.now()
+
+    var new_customer = {
+      custName: custName,
+      custEmail: custEmail,
+      gameName: gameName,
+      gamePrice: price,
+      orderTime: current_time,
+    }
+
+    if (custName == null || custName == "" ||
+      custEmail == null || custEmail == "" ||
+      gameName == null || gameName == "" ||
+      price == null || price == "") {
+    }
+    else {
+      valid = true;
+    }
+
+    if (valid) {
+      ref.add(new_customer);
+
+      setCustNameInput("");
+      setCustEmailInput("");
+      setGameInput("");
+      setOrderPrice("");
+
+      alert("Customer created!");
+    }
   }
 
   return (
-
-    // <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-    /* <Prompt message="Are you sure you want to leave?" /> */
     < ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} >
       <View style={styles.inputContainer}>
 
@@ -144,6 +217,40 @@ export default function ToolsScreen() {
           <Text style={styles.text}>Add Order</Text>
         </TouchableOpacity>
 
+        <br />
+        <br />
+        <br />
+
+        <Text style={styles.text}>Add customer to database</Text>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Customer Name"
+          maxLength={40}
+          onChangeText={(text) => setCustNameInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Customer Email"
+          maxLength={40}
+          onChangeText={(text) => setCustEmailInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Game Name"
+          onChangeText={(text) => setGameInput(text)}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Price (USD)"
+          maxLength={40}
+          onChangeText={(text) => setOrderPrice(text)}
+        />
+        <TouchableOpacity
+          style={styles.insertButton}
+          onPress={() => addCustomerToDatabase(custNameInput, custEmailInput, gameInput, orderPrice)}
+        >
+          <Text style={styles.text}>Add Customer</Text>
+        </TouchableOpacity>
 
       </View>
     </ScrollView >
@@ -152,24 +259,22 @@ export default function ToolsScreen() {
 
 
 
-function addOrderToDatabase(custName, custEmail, gameName, price, gameImage) {
-  console.log("calling addOrderToDatabase()...")
-  
-  var ref = database.collection("orders");
-  var current_time = Date.now()
 
-  var new_order = {
-    custName: custName,
-    custEmail: custEmail,
-    gameName: gameName,
-    gamePrice: price,
-    orderTime: current_time,
-    image: gameImage
-  }
-  ref.add(new_order);
 
-  alert("Order created!");
-}
+// function addGameToDatabase(gameName, key, imageUrl, price) {
+//   console.log("calling addGameToDatabase()...");
+
+//   var ref = database.collection("games");
+
+//   ref.add({
+//     gameName: gameName,
+//     key: key,
+//     imageUrl: imageUrl,
+//     price: price
+//   })
+
+//   alert("Game added!");
+// }
 
 const styles = StyleSheet.create({
   container: {
