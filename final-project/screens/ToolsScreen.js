@@ -58,6 +58,7 @@ export default function ToolsScreen() {
       setPrice("");
 
       alert("Game created!");
+      location.reload();
     }
   }
 
@@ -100,6 +101,7 @@ export default function ToolsScreen() {
       setGameImageInput("");
 
       alert("Order created!");
+      location.reload();
     }
   }
 
@@ -139,6 +141,7 @@ export default function ToolsScreen() {
       setOrderPrice("");
 
       alert("Customer created!");
+      location.reload();
     }
   }
 
