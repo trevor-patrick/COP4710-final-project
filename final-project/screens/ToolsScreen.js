@@ -107,7 +107,7 @@ export default function ToolsScreen() {
         }
       }
 
-      async function addCustomerToDatabase(custName, custEmail, gameName, price) {
+      async function addCustomerToDatabase(custName, custEmail) {
         console.log("calling addCustomerToDatabase()...");
         var valid = false;
 
@@ -120,15 +120,11 @@ export default function ToolsScreen() {
         var new_customer = {
           custName: custName,
           custEmail: custEmail,
-          gameName: gameName,
-          gamePrice: price,
           orderTime: current_time,
         }
 
         if (custName == null || custName == "" ||
-          custEmail == null || custEmail == "" ||
-          gameName == null || gameName == "" ||
-          price == null || price == "") {
+          custEmail == null || custEmail == "") {
         }
         else {
           valid = true;
@@ -139,8 +135,6 @@ export default function ToolsScreen() {
 
           setCustNameInput("");
           setCustEmailInput("");
-          setGameInput("");
-          setOrderPrice("");
 
           alert("Customer created!");
           location.reload();
@@ -239,20 +233,9 @@ export default function ToolsScreen() {
               maxLength={40}
               onChangeText={(text) => setCustEmailInput(text)}
             />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Game Name"
-              onChangeText={(text) => setGameInput(text)}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Price (USD)"
-              maxLength={40}
-              onChangeText={(text) => setOrderPrice(text)}
-            />
-            <TouchableOpacity
+           <TouchableOpacity
               style={styles.insertButton}
-              onPress={() => addCustomerToDatabase(custNameInput, custEmailInput, gameInput, orderPrice)}
+              onPress={() => addCustomerToDatabase(custNameInput, custEmailInput)}
             >
               <Text style={styles.text}>Add Customer</Text>
             </TouchableOpacity>
