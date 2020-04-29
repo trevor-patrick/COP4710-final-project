@@ -31,119 +31,128 @@ export default function HomeScreen() {
           ...documentSnapshot.data(),
           key: documentSnapshot.id,
         });
-  
+
       });
       setGames(games);
       setLoading(false);
     });
-  
+
   }, []);
 
   //function to delete item from database
   const pressHandler = (gameName, key) => {
-    games.forEach(item =>{
-      if(item.gameName == gameName && item.key == key){
-        database.collection("games").doc(item.key).delete();
-      }
-    })
-    reducedGames.forEach(item =>{
-      if(item.gameName == gameName && item.key == key){
-        database.collection("games").doc(item.key).delete();
-      }
-    })
-    // removes game from games state without having to refresh page
-    setGames((prevGames) => {
-      return prevGames.filter(games => games.key != key);
-    });
+    if (firebaseApp.auth().currentUser.uid.toString() == "XjA4BoMlXWgQWwcvJgk1TcCvCL82") {
+      games.forEach(item => {
+        if (item.gameName == gameName && item.key == key) {
+          database.collection("games").doc(item.key).delete();
+        }
+      })
+      reducedGames.forEach(item => {
+        if (item.gameName == gameName && item.key == key) {
+          database.collection("games").doc(item.key).delete();
+        }
+      })
+      // removes game from games state without having to refresh page
+      setGames((prevGames) => {
+        return prevGames.filter(games => games.key != key);
+      });
 
-    // removes game from reducedGames state without having to refresh page
-    setReducedGames((prevGames) => {
-      return prevGames.filter(reducedGames => reducedGames.key != key);
-    });
+      // removes game from reducedGames state without having to refresh page
+      setReducedGames((prevGames) => {
+        return prevGames.filter(reducedGames => reducedGames.key != key);
+      });
+    }
   }
 
   //function to sort data from database
   function sortGameAscending() {
-    if(sortGame){
-    var ref = database.collection("games").orderBy("gameName");
-    ref.onSnapshot(querySnapshot => {
-      const games = [];
-      querySnapshot.forEach(documentSnapshot => {
-        games.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
+    if (sortGame) {
+      var ref = database.collection("games").orderBy("gameName");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
         });
+        setGames(games);
+        setLoading(false);
+        setsortGame(false);
       });
-      setGames(games);
-      setLoading(false);
-      setsortGame(false);
-    });
-  }
-  else{
-    sortGameDescending();
-  }
+    }
+    else {
+      sortGameDescending();
+    }
   }
   function sortGameDescending() {
-    if(!sortGame){
-    var ref = database.collection("games").orderBy("gameName", "desc");
-    ref.onSnapshot(querySnapshot => {
-      const games = [];
-      querySnapshot.forEach(documentSnapshot => {
-        games.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
+    if (!sortGame) {
+      var ref = database.collection("games").orderBy("gameName", "desc");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
         });
+        setGames(games);
+        setLoading(false);
+        setsortGame(true);
       });
-      setGames(games);
-      setLoading(false);
-      setsortGame(true);
-    });
-    
-  }
-  else{
-    sortGameAscending();
-  }
+
+    }
+    else {
+      sortGameAscending();
+    }
   }
   //function to sort descending by price
-  function sortPriceDescending(){
-    if(!sortPrice){
-    var ref = database.collection("games").orderBy("price", "desc");
-    ref.onSnapshot(querySnapshot => {
-      const games = [];
-      querySnapshot.forEach(documentSnapshot => {
-        games.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
+  function sortPriceDescending() {
+    if (!sortPrice) {
+      var ref = database.collection("games").orderBy("price", "desc");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
         });
+        setGames(games);
+        setLoading(false);
+        setsortPrice(true);
       });
-      setGames(games);
-      setLoading(false);
-      setsortPrice(true);
-    });
+    }
+    else {
+      sortPriceAscending();
+    }
   }
-  else{
-    sortPriceAscending();
-  }
-  }
-  function sortPriceAscending(){
-    if(sortPrice){
-    var ref = database.collection("games").orderBy("price");
-    ref.onSnapshot(querySnapshot => {
-      const games = [];
-      querySnapshot.forEach(documentSnapshot => {
-        games.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
+  function sortPriceAscending() {
+    if (sortPrice) {
+      var ref = database.collection("games").orderBy("price");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
         });
+        setGames(games);
+        setLoading(false);
+        setsortPrice(false);
       });
-      setGames(games);
-      setLoading(false);
-      setsortPrice(false);
-    });
+    }
+    else {
+      sortPriceDescending()
+    }
   }
-  else{
-    sortPriceDescending()
-  }
+  function userSignOut() {
+    firebaseApp.auth().signOut().then(function () {
+      window.location = "http://localhost:19006/Login";
+    }).catch(function (error) {
+      console.error('Sign Out Error', error);
+    })
   }
 
   return (
@@ -151,31 +160,34 @@ export default function HomeScreen() {
 
       <ScrollView>
 
-        <View style={{ flexDirection: "row"}}>
+        <View style={{ flexDirection: "row" }}>
           <TextInput
             style={styles.textInput}
             placeholder="Search by title..."
             maxLength={20}
             onChangeText={(text) => setSearchTitle(text)}
           />
-    
+
           <TouchableOpacity onPress={() => {
             setReducedGames(reduceByTitle(games, searchTitle))
           }}>
             <Icon name="search" style={styles.icon}>
             </Icon>
-            
+
           </TouchableOpacity>
-          <View style={{flexDirection:"row", paddingTop: 8}}>
-          <View style={{paddingLeft: 8}}>
-            <Button title="Sort by Name" onPress={() => sortGameAscending()}/>
+          <View style={{ flexDirection: "row", paddingTop: 8 }}>
+            <View style={{ paddingLeft: 8 }}>
+              <Button title="Sort by Name" onPress={() => sortGameAscending()} />
             </View>
-            <View style={{paddingLeft: 8}}>
-            <Button title="Sort by Price" onPress={() => sortPriceAscending()}/>
+            <View style={{ paddingLeft: 8 }}>
+              <Button title="Sort by Price" onPress={() => sortPriceAscending()} />
+            </View>
+            <View style={{ paddingLeft: 8 }}>
+              <Button title="Sign Out" onPress={() => userSignOut()} />
             </View>
           </View>
-         </View>
-        
+        </View>
+
 
         <FlatList
           data={(reducedGames[0] != null) ? reducedGames : games}
@@ -211,11 +223,11 @@ function getAllGames() {
     // console.log(games[key]);
     gamesList.push(games[key]);
   }
-  gamesList.forEach(function(test){
+  gamesList.forEach(function (test) {
     console.log(test);
   });
 
-return gamesList;
+  return gamesList;
 }
 
 // this function just changes whats in the games state 
@@ -240,13 +252,13 @@ function Item({ item }) {
   return (
     <View style={styles.item}>
       <Text style={styles.title}>{item.gameName}</Text>
-      <br/>
+      <br />
       <Image
         style={{ width: 100, height: 100 }}
         source={{ uri: item.imageUrl }}
         resizeMode='contain'>
       </Image>
-      <br/>
+      <br />
       <Text style={styles.title}>${item.price}</Text>
     </View>
   );

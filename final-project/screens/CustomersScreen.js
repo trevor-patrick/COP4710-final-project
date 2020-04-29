@@ -50,38 +50,47 @@ export default function CustomersScreen() {
   }, [], []);
 
   //function to delete item from database
-  const pressHandler = (obj ,custName, key) => {
-    customers.forEach(item => {
-      if (item.custName == custName && item.key == key) {
-        database.collection("customers").doc(item.key).delete();
-      }
-    })
-    reducedcustomers.forEach(item => {
-      if (item.custName == custName && item.key == key) {
-        database.collection("customers").doc(item.key).delete();
-        
-      }
-    })
-    orders.forEach(item =>{
-      if(item.custName == obj.custName && item.custEmail == obj.custEmail){
+  const pressHandler = (obj, custName, key) => {
+    if (firebaseApp.auth().currentUser.uid.toString() == "XjA4BoMlXWgQWwcvJgk1TcCvCL82") {
+      customers.forEach(item => {
+        if (item.custName == custName && item.key == key) {
+          database.collection("customers").doc(item.key).delete();
+        }
+      })
+      reducedcustomers.forEach(item => {
+        if (item.custName == custName && item.key == key) {
+          database.collection("customers").doc(item.key).delete();
+
+        }
+      })
+      orders.forEach(item => {
+        if (item.custName == obj.custName && item.custEmail == obj.custEmail) {
           database.collection("orders").doc(item.key).delete();
-      }
-    })
-    // removes game from customers state without having to refresh page
-    setcustomers((prevcustomers) => {
-      return prevcustomers.filter(customers => customers.key != key);
-    });
+        }
+      })
+      // removes game from customers state without having to refresh page
+      setcustomers((prevcustomers) => {
+        return prevcustomers.filter(customers => customers.key != key);
+      });
 
-    // removes game from reducedcustomers state without having to refresh page
-    setReducedcustomers((prevcustomers) => {
-      return prevcustomers.filter(reducedcustomers => reducedcustomers.key != key);
-    });
-    setOrders((prevOrders)=>{
-      return prevOrders.filter(orders => orders.custEmail != obj.custEmail)
-    })
-    location.reload();
+      // removes game from reducedcustomers state without having to refresh page
+      setReducedcustomers((prevcustomers) => {
+        return prevcustomers.filter(reducedcustomers => reducedcustomers.key != key);
+      });
+      setOrders((prevOrders) => {
+        return prevOrders.filter(orders => orders.custEmail != obj.custEmail)
+      })
+      location.reload();
+    }
   }
-
+  //function to sign user out
+  function userSignOut() {
+    firebaseApp.auth().signOut().then(function () {
+      window.location = "http://localhost:19006/Login";
+    }).catch(function (error) {
+      console.error('Sign Out Error', error);
+    })
+  }
   //function to sort data from database
   function sortAscending() {
     if (sort) {
@@ -150,6 +159,9 @@ export default function CustomersScreen() {
             <View style={{ paddingLeft: 8 }}>
               <Button title="Sort by Name" onPress={() => sortAscending()} />
             </View>
+            <View style={{ paddingLeft: 8 }}>
+              <Button title="Sign Out" onPress={() => userSignOut()} />
+            </View>
           </View>
         </View>
 
@@ -158,16 +170,16 @@ export default function CustomersScreen() {
           data={((reducedcustomers[0] != null) ? reducedcustomers : customers)}
           renderItem={({ item }) => {
             var allorders = [];
-            for(let x=0; x<orders.length; x++){
-              
-              if(orders[x].custName == item.custName){
-                allorders.push("- Title:  "+ orders[x].gameName.toString() + ", Price:  $"+ orders[x].gamePrice.toString() + "\n")
+            for (let x = 0; x < orders.length; x++) {
+
+              if (orders[x].custName == item.custName) {
+                allorders.push("- Title:  " + orders[x].gameName.toString() + ", Price:  $" + orders[x].gamePrice.toString() + "\n")
               }
             }
 
-      
+
             return (
-              <TouchableOpacity onPress={() => pressHandler(item,item.custName, item.key)}>
+              <TouchableOpacity onPress={() => pressHandler(item, item.custName, item.key)}>
                 <View style={styles.item}>
                   <Text style={styles.title}>Name: {item.custName}</Text>
                   <br />
@@ -176,11 +188,11 @@ export default function CustomersScreen() {
                   <Text style={styles.title}>Orders:</Text>
                   <br />
                   <View>
-                    
+
                     <Text style={styles.orders}>
-                         {allorders}
+                      {allorders}
                     </Text>
-                    
+
                   </View>
                   <br />
                 </View>
@@ -357,9 +369,9 @@ const styles = StyleSheet.create({
     fontSize: 18
     // marginHorizontal: 16,
   },
-  orders:{
-      fontSize: 16,
-      color: "dimgrey"
+  orders: {
+    fontSize: 16,
+    color: "dimgrey"
   }
 
 });

@@ -32,7 +32,7 @@ export default function OrdersScreen() {
           ...documentSnapshot.data(),
           key: documentSnapshot.id,
         });
-  
+
       });
       setOrders(orders);
       setLoading(false);
@@ -46,35 +46,43 @@ export default function OrdersScreen() {
           ...documentSnapshot.data(),
           key: documentSnapshot.id,
         });
-  
+
       });
       setGames(games);
       setLoading(false);
     });
-  
+
   }, []);
 
   //function to delete item from database
   const pressHandler = (item) => {
-    if (item == null)
-      return;
+    if (firebaseApp.auth().currentUser.uid.toString() == "XjA4BoMlXWgQWwcvJgk1TcCvCL82") {
+      if (item == null)
+        return;
 
-    database.collection("orders").doc(item.key).delete();
+      database.collection("orders").doc(item.key).delete();
 
-    // removes game from screen without having to refresh page
-    setOrders((prevOrders) => {
-      return prevOrders.filter(orders => orders.key != item.key);
-    });
+      // removes game from screen without having to refresh page
+      setOrders((prevOrders) => {
+        return prevOrders.filter(orders => orders.key != item.key);
+      });
 
-    setReducedOrders((prevReducedOrders) => {
-      return prevReducedOrders.filter(orders => orders.key != item.key);
+      setReducedOrders((prevReducedOrders) => {
+        return prevReducedOrders.filter(orders => orders.key != item.key);
+      })
+    }
+  }
+  //function to sign user out
+  function userSignOut() {
+    firebaseApp.auth().signOut().then(function () {
+      window.location = "http://localhost:19006/Login";
+    }).catch(function (error) {
+      console.error('Sign Out Error', error);
     })
   }
   //function to sort data from database
   function sortAscending() {
     var ref = database.collection("games").orderBy("gameName");
-    var games = null;
-    var gamesList = [];
     ref.onSnapshot(querySnapshot => {
       const games = [];
       querySnapshot.forEach(documentSnapshot => {
@@ -88,10 +96,8 @@ export default function OrdersScreen() {
     });
   }
   //function to sort descending by price
-  function sortDescending(){
+  function sortDescending() {
     var ref = database.collection("games").orderBy("price", "desc");
-    var games = null;
-    var gamesList = [];
     ref.onSnapshot(querySnapshot => {
       const games = [];
       querySnapshot.forEach(documentSnapshot => {
@@ -110,7 +116,7 @@ export default function OrdersScreen() {
 
       <ScrollView>
 
-        <View style={{ flexDirection: "row"}}>
+        <View style={{ flexDirection: "row" }}>
           <TextInput
             style={styles.textInput}
             placeholder="Search by customer name..."
@@ -118,27 +124,30 @@ export default function OrdersScreen() {
             onChangeText={(text) => setSearchName(text)}
             defaultValue=""
           />
-    
+
           <TouchableOpacity onPress={() => {
             setReducedOrders(reduceByName(orders, searchName))
           }}>
             <Icon name="search" style={styles.icon}>
             </Icon>
-            
+
           </TouchableOpacity>
-          <View style={{flexDirection:"row", paddingTop: 8}}>
-          <View style={{paddingLeft: 8}}>
-            <Button title="Sort by Name" onPress={() => sortAscending()}/>
+          <View style={{ flexDirection: "row", paddingTop: 8 }}>
+            <View style={{ paddingLeft: 8 }}>
+              <Button title="Sort by Name" onPress={() => sortAscending()} />
             </View>
-            <View style={{paddingLeft: 8}}>
-            <Button title="Sort by Price" onPress={() => sortDescending()}/>
+            <View style={{ paddingLeft: 8 }}>
+              <Button title="Sort by Price" onPress={() => sortDescending()} />
+            </View>
+            <View style={{ paddingLeft: 8 }}>
+              <Button title="Sign Out" onPress={() => userSignOut()} />
             </View>
           </View>
-         </View>
-        
+        </View>
+
 
         <FlatList
-          data={(reducedOrders[0] != null) ? reducedOrders: orders}
+          data={(reducedOrders[0] != null) ? reducedOrders : orders}
           renderItem={({ item }) => (
             // added on click event
             <TouchableOpacity onPress={() => pressHandler(item)}>
@@ -171,11 +180,11 @@ function getAllGames() {
     // console.log(games[key]);
     gamesList.push(games[key]);
   }
-  gamesList.forEach(function(test){
+  gamesList.forEach(function (test) {
     console.log(test);
   });
 
-return gamesList;
+  return gamesList;
 }
 
 // gets all orders from database
@@ -196,11 +205,11 @@ function getAllOrders() {
     // console.log(games[key]);
     gamesList.push(games[key]);
   }
-  gamesList.forEach(function(test){
+  gamesList.forEach(function (test) {
     console.log(test);
   });
 
-return gamesList;
+  return gamesList;
 }
 
 
@@ -247,13 +256,13 @@ function Item({ item }) {
       <Text style={styles.title}>Customer: {item.custName}</Text>
       <Text style={styles.title}>Email: {item.custEmail}</Text>
       <Text style={styles.title}>Game: {item.gameName}</Text>
-      <br/>
+      <br />
       <Image
         style={{ width: 100, height: 100 }}
         source={{ uri: item.image }}
         resizeMode='contain'>
       </Image>
-      <br/>
+      <br />
       <Text style={styles.title}>Order total: ${item.gamePrice}</Text>
 
       <Text style={styles.title}>Purchased: {moment(momentTime).format('L')}</Text>
