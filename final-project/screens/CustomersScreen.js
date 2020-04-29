@@ -149,7 +149,7 @@ export default function CustomersScreen() {
           />
 
           <TouchableOpacity onPress={() => {
-            setReducedcustomers(reduceByTitle(customers, searchTitle))
+            setReducedcustomers(reduceByName(customers, searchTitle))
           }}>
             <Icon name="search" style={styles.icon}>
             </Icon>
@@ -234,21 +234,21 @@ function getAllcustomers() {
 }
 
 // this function just changes whats in the customers state 
-function reduceByTitle(allcustomers, title) {
-  if (title == "" || title == null) {
+function reduceByName(allcustomers, name) {
+  if (name == "" || name == null) {
     return [];
   }
 
-  var customersWithTitle = [];
+  var customersWithName = [];
 
-  // copy allcustomers to customersWithQuery, only customers with title 'LIKE' query
+  // copy allcustomers to customersWithQuery, only customers with name 'LIKE' query
   for (let i = 0; i < allcustomers.length; i++) {
-    if (allcustomers[i].gameName.includes(title)) {
-      customersWithTitle.push(allcustomers[i]);
+    if (allcustomers[i].custName.includes(name)) {
+      customersWithName.push(allcustomers[i]);
     }
   }
 
-  return customersWithTitle;
+  return customersWithName;
 }
 
 
