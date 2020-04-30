@@ -72,7 +72,7 @@ export default function ToolsScreen() {
         const snapshot = await database.collection("games").get();
 
         var ref = database.collection("orders");
-        var current_time = Date.now()
+        var currentTime = Date.now()
 
         if (custName == null || custName == "" ||
           custEmail == null || custEmail == "" ||
@@ -90,7 +90,7 @@ export default function ToolsScreen() {
           custEmail: custEmail,
           gameName: gameName,
           gamePrice: price,
-          orderTime: current_time,
+          orderTime: currentTime,
           image: gameImage});
 
           setCustNameInput("");
@@ -112,13 +112,7 @@ export default function ToolsScreen() {
         const snapshot = await database.collection("games").get();
 
         var ref = database.collection("customers");
-        var current_time = Date.now()
-
-        var new_customer = {
-          custName: custName,
-          custEmail: custEmail,
-          createdTime: current_time,
-        }
+        var currentTime = Date.now()
 
         if (custName == null || custName == "" ||
           custEmail == null || custEmail == "") {
@@ -128,7 +122,11 @@ export default function ToolsScreen() {
         }
 
         if (valid) {
-          ref.add(new_customer);
+          ref.add({
+            custName: custName,
+            custEmail: custEmail,
+            createdTime: currentTime 
+          });
 
           setCustNameInput("");
           setCustEmailInput("");
