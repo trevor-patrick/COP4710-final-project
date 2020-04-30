@@ -120,7 +120,7 @@ export default function ToolsScreen() {
         var new_customer = {
           custName: custName,
           custEmail: custEmail,
-          orderTime: current_time,
+          createdTime: current_time,
         }
 
         if (custName == null || custName == "" ||
