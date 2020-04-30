@@ -74,15 +74,6 @@ export default function ToolsScreen() {
         var ref = database.collection("orders");
         var current_time = Date.now()
 
-        var new_order = {
-          custName: custName,
-          custEmail: custEmail,
-          gameName: gameName,
-          gamePrice: price,
-          orderTime: current_time,
-          image: gameImage
-        }
-
         if (custName == null || custName == "" ||
           custEmail == null || custEmail == "" ||
           gameName == null || gameName == "" ||
@@ -94,7 +85,13 @@ export default function ToolsScreen() {
         }
 
         if (valid) {
-          ref.add(new_order);
+          ref.add({
+          custName: custName,
+          custEmail: custEmail,
+          gameName: gameName,
+          gamePrice: price,
+          orderTime: current_time,
+          image: gameImage});
 
           setCustNameInput("");
           setCustEmailInput("");
