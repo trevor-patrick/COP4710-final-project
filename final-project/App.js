@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import useLinking from './navigation/useLinking';
-
+import firebaseApp from './firebase'
 const Stack = createStackNavigator();
 
 export default function App(props) {
@@ -22,6 +22,13 @@ export default function App(props) {
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       try {
+        firebaseApp.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            console.log("User is signed in.");
+          } else {
+            // No user is signed in.
+          }
+        });
         SplashScreen.preventAutoHide();
 
         // Load our initial navigation state

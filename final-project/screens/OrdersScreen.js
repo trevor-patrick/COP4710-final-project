@@ -17,6 +17,8 @@ var database = firebaseApp.firestore();
 
 export default function OrdersScreen() {
   const [games, setGames] = React.useState([])
+  const [sortGame, setsortGame] = React.useState(true)
+  const [sortPrice, setsortPrice] = React.useState(true)
   const [orders, setOrders] = React.useState([])
   const [loading, setLoading] = React.useState(true)
   const [reducedOrders, setReducedOrders] = React.useState([])
@@ -39,18 +41,18 @@ export default function OrdersScreen() {
     });
 
 
-    database.collection("games").onSnapshot(querySnapshot => {
-      const games = [];
-      querySnapshot.forEach(documentSnapshot => {
-        games.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
-        });
+    // database.collection("games").onSnapshot(querySnapshot => {
+    //   const games = [];
+    //   querySnapshot.forEach(documentSnapshot => {
+    //     games.push({
+    //       ...documentSnapshot.data(),
+    //       key: documentSnapshot.id,
+    //     });
 
-      });
-      setGames(games);
-      setLoading(false);
-    });
+    //   });
+    //   setGames(games);
+    //   setLoading(false);
+    // });
 
   }, []);
 
@@ -75,40 +77,90 @@ export default function OrdersScreen() {
   //function to sign user out
   function userSignOut() {
     firebaseApp.auth().signOut().then(function () {
+      sessionStorage.setItem('userName', null);
+      sessionStorage.setItem('isSignedIn', false);
       window.location = "http://localhost:19006/Login";
     }).catch(function (error) {
       console.error('Sign Out Error', error);
     })
   }
   //function to sort data from database
-  function sortAscending() {
-    var ref = database.collection("games").orderBy("gameName");
-    ref.onSnapshot(querySnapshot => {
-      const games = [];
-      querySnapshot.forEach(documentSnapshot => {
-        games.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
+  function sortGameAscending() {
+    if (sortGame) {
+      var ref = database.collection("orders").orderBy("gameName");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
         });
+        setsortGame(false);
+        setOrders(games);
+        setLoading(false);
       });
-      setGames(games);
-      setLoading(false);
-    });
+    } else {
+      sortGameDescending();
+    }
+  }
+  function sortGameDescending() {
+    if (!sortGame) {
+      var ref = database.collection("orders").orderBy("gameName", "desc");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+        setsortGame(true);
+        setOrders(games);
+        setLoading(false);
+      });
+    } else {
+      sortGameAscending();
+    }
+  }
+  function sortPriceAscending() {
+    if (sortPrice) {
+      var ref = database.collection("orders").orderBy("gamePrice");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+        setsortPrice(false);
+        setOrders(games);
+        setLoading(false);
+      });
+    } else {
+      sortPriceDescending();
+    }
   }
   //function to sort descending by price
-  function sortDescending() {
-    var ref = database.collection("games").orderBy("price", "desc");
-    ref.onSnapshot(querySnapshot => {
-      const games = [];
-      querySnapshot.forEach(documentSnapshot => {
-        games.push({
-          ...documentSnapshot.data(),
-          key: documentSnapshot.id,
+  function sortPriceDescending() {
+    if (!sortPrice) {
+      var ref = database.collection("orders").orderBy("gamePrice", "desc");
+      ref.onSnapshot(querySnapshot => {
+        const games = [];
+        querySnapshot.forEach(documentSnapshot => {
+          games.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
         });
+        setsortPrice(true);
+        setOrders(games);
+        setLoading(false);
       });
-      setGames(games);
-      setLoading(false);
-    });
+    } else {
+      sortPriceAscending();
+    }
   }
 
   return (
@@ -134,10 +186,10 @@ export default function OrdersScreen() {
           </TouchableOpacity>
           <View style={{ flexDirection: "row", paddingTop: 8 }}>
             <View style={{ paddingLeft: 8 }}>
-              <Button title="Sort by Name" onPress={() => sortAscending()} />
+              <Button title="Sort by Game Name" onPress={() => sortGameAscending()} />
             </View>
             <View style={{ paddingLeft: 8 }}>
-              <Button title="Sort by Price" onPress={() => sortDescending()} />
+              <Button title="Sort by Price" onPress={() => sortPriceAscending()} />
             </View>
             <View style={{ paddingLeft: 8 }}>
               <Button title="Sign Out" onPress={() => userSignOut()} />
