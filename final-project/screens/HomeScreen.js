@@ -149,6 +149,8 @@ export default function HomeScreen() {
   }
   function userSignOut() {
     firebaseApp.auth().signOut().then(function () {
+      sessionStorage.setItem('userName', null);
+      sessionStorage.setItem('isSignedIn', false);
       window.location = "http://localhost:19006/Login";
     }).catch(function (error) {
       console.error('Sign Out Error', error);

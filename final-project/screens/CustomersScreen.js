@@ -86,6 +86,8 @@ export default function CustomersScreen() {
   //function to sign user out
   function userSignOut() {
     firebaseApp.auth().signOut().then(function () {
+      localStorage.setItem('userName', null);
+      localStorage.setItem('isSignedIn', false);
       window.location = "http://localhost:19006/Login";
     }).catch(function (error) {
       console.error('Sign Out Error', error);
