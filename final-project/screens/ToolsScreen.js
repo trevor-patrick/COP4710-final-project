@@ -250,17 +250,6 @@ export default function ToolsScreen() {
           maxLength={40}
           onChangeText={(text) => setCustEmailInput(text)}
         />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Game Name"
-          onChangeText={(text) => setGameInput(text)}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Price (USD)"
-          maxLength={40}
-          onChangeText={(text) => setOrderPrice(text)}
-        />
         <TouchableOpacity
           style={styles.insertButton}
           onPress={() => addCustomerToDatabase(custNameInput, custEmailInput, gameInput, orderPrice)}
